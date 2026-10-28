@@ -126,6 +126,22 @@ export async function verifyBrowserNetworkEvidence(
       evidence.normalized_result,
       site.origin,
     );
+    const summary = await client.callTool({
+      name: "inspect_analysis_view",
+      arguments: {
+        source: { kind: "inline", evidence },
+        view: { kind: "summary" },
+      },
+    });
+    assert.notEqual(summary.isError, true, JSON.stringify(summary));
+    assert.ok(
+      parseEvidence(
+        requireMcpOutput(summary, "inspect_analysis_view"),
+      ).normalized_result.summary.network.by_status_class.some(
+        (group) => group.status_class === "9xx" && group.transactions === 1,
+      ),
+      "The captured nonstandard response must remain available in summaries",
+    );
     if (attachment !== undefined) {
       const connectedScenario = browserScenarioSchema.parse({
         ...scenario,
