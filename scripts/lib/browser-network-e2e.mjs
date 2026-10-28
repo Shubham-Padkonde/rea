@@ -118,6 +118,7 @@ export async function verifyBrowserNetworkEvidence(
     );
     assert.notEqual(result.isError, true, JSON.stringify(result));
     assert.notEqual(result.structuredContent, undefined);
+    await client.ping();
     const evidence = parseEvidence(
       requireMcpOutput(result, "capture_browser_scenario"),
     );
@@ -160,6 +161,7 @@ export async function verifyBrowserNetworkEvidence(
       "/compressed",
       "/stream",
       "/empty",
+      "/nonstandard-status",
       "/form",
     ])
       assert.equal(
